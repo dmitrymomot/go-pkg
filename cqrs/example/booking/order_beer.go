@@ -1,4 +1,4 @@
-package app
+package booking
 
 import (
 	"context"
@@ -41,8 +41,9 @@ func (o OrderBeerHandler) Handle(ctx context.Context, c interface{}) error {
 	}
 
 	if err := o.eventBus.Publish(ctx, &BeerOrdered{
-		RoomId: cmd.RoomId,
-		Count:  cmd.Count,
+		RoomId:   cmd.RoomId,
+		Count:    cmd.Count,
+		UnixTime: cmd.UnixTime,
 	}); err != nil {
 		return err
 	}
@@ -78,8 +79,9 @@ func (o OrderBeerOnRoomBooked) Handle(ctx context.Context, e interface{}) error 
 	event := e.(*RoomBooked)
 
 	orderBeerCmd := &OrderBeer{
-		RoomId: event.RoomId,
-		Count:  rand.Int63n(10) + 1,
+		RoomId:   event.RoomId,
+		Count:    rand.Int63n(10) + 1,
+		UnixTime: event.UnixTime,
 	}
 
 	return o.commandBus.Send(ctx, orderBeerCmd)

@@ -1,12 +1,14 @@
-package app
+package booking
 
 import (
 	"context"
 	fmt "fmt"
 	"sync"
+	"time"
 
 	"github.com/dmitrymomot/go-pkg/cqrs"
 	"github.com/dmitrymomot/go-utils"
+	"github.com/fatih/color"
 )
 
 // BookingsFinancialReport is a read model, which calculates how much money we may earn from bookings.
@@ -54,6 +56,28 @@ func (b *BookingsFinancialReport) Handle(ctx context.Context, e interface{}) err
 
 	b.totalCharge += event.Price
 
+	reqPathTime := time.Since(time.Unix(0, event.UnixTime))
+	if reqPathTime > time.Second*60 {
+		color.Red(">>> [1m]: Request path time is too long: %s\n", reqPathTime)
+	} else if reqPathTime > time.Second*50 {
+		color.Yellow(">>> [50]: Request path time is too long: %s\n", reqPathTime)
+	} else if reqPathTime > time.Second*40 {
+		color.Yellow(">>> [40]: Request path time is too long: %s\n", reqPathTime)
+	} else if reqPathTime > time.Second*30 {
+		color.Yellow(">>> [30]: Request path time is too long: %s\n", reqPathTime)
+	} else if reqPathTime > time.Second*20 {
+		color.Yellow(">>> [20]: Request path time is too long: %s\n", reqPathTime)
+	} else if reqPathTime > time.Second*10 {
+		color.Yellow(">>> [10]: Request path time is too long: %s\n", reqPathTime)
+	} else if reqPathTime > time.Second*5 {
+		color.Yellow(">>> [05]: Request path time is too long: %s\n", reqPathTime)
+	} else if reqPathTime > time.Second {
+		color.Yellow(">>> [01]: Request path time is too long: %s\n", reqPathTime)
+	} else {
+		color.Green(">>> [00]: Request path time: %s\n", reqPathTime)
+	}
+
 	fmt.Printf(">>> The room #%s has been booked for $%d\n%s\n", event.RoomId, b.totalCharge, utils.PrettyString(event))
+
 	return nil
 }

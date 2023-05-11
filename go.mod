@@ -7,7 +7,9 @@ require (
 	github.com/ThreeDotsLabs/watermill v1.2.0
 	github.com/ThreeDotsLabs/watermill-redisstream v1.1.0
 	github.com/dmitrymomot/binder v0.1.0
+	github.com/dmitrymomot/go-env v1.0.2
 	github.com/dmitrymomot/go-utils v0.1.5
+	github.com/fatih/color v1.12.0
 	github.com/go-chi/chi/v5 v5.0.8
 	github.com/go-kit/kit v0.12.0
 	github.com/google/uuid v1.3.0
@@ -43,6 +45,8 @@ require (
 	github.com/hashicorp/go-multierror v1.1.1 // indirect
 	github.com/labstack/gommon v0.4.0 // indirect
 	github.com/lithammer/shortuuid/v3 v3.0.7 // indirect
+	github.com/mattn/go-colorable v0.1.11 // indirect
+	github.com/mattn/go-isatty v0.0.16 // indirect
 	github.com/mcnijman/go-emailaddress v1.1.0 // indirect
 	github.com/oklog/ulid v1.3.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect

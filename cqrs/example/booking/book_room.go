@@ -1,4 +1,4 @@
-package app
+package booking
 
 import (
 	"context"
@@ -75,6 +75,7 @@ func (b BookRoomHandler) Handle(ctx context.Context, c interface{}) error {
 		Price:         price,
 		StartDate:     cmd.StartDate,
 		EndDate:       cmd.EndDate,
+		UnixTime:      cmd.UnixTime,
 	}); err != nil {
 		return err
 	}

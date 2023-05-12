@@ -16,7 +16,7 @@ services:
     working_dir: /app
     command: go run ./cqrs/example/cmd/trafficsim/main.go
     environment:
-      SIMULATE_RPS: 100
+      SIMULATE_RPS: 10
 
   app-worker:
     image: golang:1.19
@@ -33,7 +33,7 @@ services:
     command: go run ./cqrs/example/cmd/app/main.go
     deploy:
       mode: replicated
-      replicas: 10 # don't use more than 10 replicas on a single node
+      replicas: 3 # reminder: don't use more than 10 replicas on a laptop :)
       restart_policy:
         condition: on-failure
         delay: 5s

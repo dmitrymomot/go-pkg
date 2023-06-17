@@ -2,19 +2,13 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"os"
-	"time"
 
-	"github.com/dmitrymomot/go-env"
 	"github.com/dmitrymomot/go-pkg/cqrs"
 	"github.com/dmitrymomot/go-pkg/cqrs/example/booking"
-	"github.com/dmitrymomot/go-utils"
 	"github.com/redis/go-redis/v9"
 	"github.com/sirupsen/logrus"
 )
-
-var simulateTraffic = env.GetBool("SIMULATE_TRAFFIC", false)
 
 func main() {
 	logger := logrus.WithFields(logrus.Fields{
@@ -68,7 +62,7 @@ func main() {
 
 	// cqrs.Facade is facade for Command and Event buses, and processors.
 	// You can use facade, or create buses and processors manually (you can inspire with cqrs.NewFacade)
-	cqrsFacade, err := cqrs.NewFacade(
+	if _, err := cqrs.NewFacade(
 		redisClient,
 		cqrs.NewLogrusWrapper(logger.WithField("component", "cqrs-facade")),
 		router,
@@ -80,53 +74,13 @@ func main() {
 			booking.NewBookingsFinancialReport(),
 			booking.NewOrderBeerOnRoomBooked(),
 		},
-	)
-	if err != nil {
+	); err != nil {
 		logger.WithError(err).Fatal("Cannot create cqrs facade")
-	}
-
-	if simulateTraffic {
-		// publish BookRoom commands every second to simulate incoming traffic
-		go func() {
-			publishCommands(
-				cqrsFacade.CommandBus(),
-				logger.WithField("component", "publishCommands"),
-			)
-		}()
 	}
 
 	// processors are based on router, so they will work when router will start
 	if err := router.Run(context.Background()); err != nil {
 		logger.WithError(err).Fatal("Cannot run router")
-	}
-}
-
-// publish BookRoom commands every 1/100 second to simulate incoming traffic
-func publishCommands(commandBus cqrs.CommandBus, logger *logrus.Entry) {
-	logger.Info("Publishing commands started")
-	startTime := time.Now()
-	defer func() {
-		logger.WithField("duration", time.Since(startTime)).Info("Publishing commands finished")
-	}()
-
-	for i := 1; i < 10000; i++ {
-		go func(n int) {
-			startDate := time.Now().Add(time.Hour * 24 * 2)
-			endDate := startDate.Add(time.Hour * 24 * 3)
-
-			bookRoomCmd := &booking.BookRoom{
-				RoomId:    fmt.Sprintf("%d", n),
-				GuestName: "John",
-				StartDate: utils.Pointer(startDate),
-				EndDate:   utils.Pointer(endDate),
-				UnixTime:  time.Now().UnixNano(),
-			}
-			if err := commandBus.Send(context.Background(), bookRoomCmd); err != nil {
-				logger.WithError(err).Error("Cannot send BookRoom command")
-			}
-		}(i) // simulate some work
-
-		time.Sleep(time.Second / 100) // simulate incoming traffic
 	}
 }
 

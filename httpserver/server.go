@@ -65,7 +65,7 @@ func (s *Server) Run(ctx context.Context) error {
 	// Start the HTTP server
 	g.Go(func() error {
 		s.log("Starting HTTP server on %s", s.Server.Addr)
-		if err := s.Server.ListenAndServe(); err != http.ErrServerClosed {
+		if err := s.Server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			return fmt.Errorf("failed to start HTTP server: %w", err)
 		}
 		return nil
@@ -74,7 +74,7 @@ func (s *Server) Run(ctx context.Context) error {
 	// Listen for the operating system interrupt signal (e.g., Ctrl+C)
 	g.Go(func() error {
 		sigint := make(chan os.Signal, 1)
-		signal.Notify(sigint, os.Interrupt, syscall.SIGTERM)
+		signal.Notify(sigint, os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
 
 		select {
 		case <-ctx.Done():

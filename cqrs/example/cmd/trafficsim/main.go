@@ -65,6 +65,9 @@ func publishCommands(commandBus cqrs.CommandBus, simulateRPS int64, logger *logr
 	i := 0
 	for {
 		go func(n int) {
+			ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
+			defer cancel()
+
 			startDate := time.Now().Add(time.Hour * 24 * 2)
 			endDate := startDate.Add(time.Hour * 24 * 3)
 
@@ -75,7 +78,7 @@ func publishCommands(commandBus cqrs.CommandBus, simulateRPS int64, logger *logr
 				EndDate:   utils.Pointer(endDate),
 				UnixTime:  time.Now().UnixNano(),
 			}
-			if err := commandBus.Send(context.Background(), bookRoomCmd); err != nil {
+			if err := commandBus.Send(ctx, bookRoomCmd); err != nil {
 				logger.WithError(err).Error("Cannot send BookRoom command")
 			}
 		}(i) // simulate some work

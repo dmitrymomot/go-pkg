@@ -23,7 +23,7 @@ func main() {
 	}
 
 	// Init asynq client
-	asynqClient := asynq.NewClient(redisConnOpt)
+	asynqClient, err := asynq.NewClient(redisConnOpt)
 	defer asynqClient.Close()
 
 	// Create a context with a timeout and set the Server's context
@@ -38,6 +38,8 @@ func main() {
 		redisConnOpt, logger,
 		worker.WithSchedulerLocation("UTC"), // options are not required
 	)
+	defer schedulerServer.Shutdown()
+
 	// Init scheduler handlers
 	testScheduler := NewScheduler(nil)
 	// Run the scheduler
@@ -51,6 +53,8 @@ func main() {
 		redisConnOpt, logger,
 		worker.WithQueueName("default"), // options are not required
 	)
+	defer queueServer.Shutdown()
+
 	// Init worker handlers
 	testWorker := NewWorker(nil)
 	// Run the worker

@@ -66,3 +66,9 @@ func (srv *SchedulerServer) Run(handlers ...schedulerHandler) func() error {
 		return srv.Scheduler.Run()
 	}
 }
+
+// Shutdown gracefully shuts down the scheduler server by waiting for all
+// pending tasks to be processed.
+func (srv *SchedulerServer) Shutdown() {
+	srv.Scheduler.Shutdown()
+}

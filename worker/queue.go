@@ -85,3 +85,10 @@ func registerQueueHandlers(handlers ...taskHandler) *asynq.ServeMux {
 
 	return mux
 }
+
+// Shutdown gracefully shuts down the queue server by waiting for all
+// in-flight tasks to finish processing before shutdown.
+func (srv *QueueServer) Shutdown() {
+	srv.Server.Stop()
+	srv.Server.Shutdown()
+}

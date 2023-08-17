@@ -16,7 +16,7 @@ import (
 type (
 	// Logger is an interface for logging.
 	Logger interface {
-		Printf(format string, v ...interface{})
+		Infof(format string, v ...interface{})
 	}
 
 	// http.Server wrapper to handle graceful shutdown
@@ -53,7 +53,7 @@ func NewServer(addr string, handler http.Handler, opts ...Option) *Server {
 // log messages if a logger is configured
 func (s *Server) log(format string, v ...interface{}) {
 	if s.logger != nil {
-		s.logger.Printf(format, v...)
+		s.logger.Infof(format, v...)
 	}
 }
 
